@@ -1,0 +1,10 @@
+{
+  "name": "Tetris Mobile",
+  "short_name": "Tetris",
+  "start_url": "./index.html",
+  "display": "standalone",
+  "background_color": "#10131a",
+  "theme_color": "#111827",
+  "orientation": "portrait",
+  "lang": "lt"
+}

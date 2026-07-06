@@ -1,6 +1,6 @@
-# Tetris Mobile
+# Tetris Runner
 
-Mobiliai pritaikytas Tetris žaidimas, skirtas atidaryti telefone per naršyklę.
+Mobiliai pritaikytas Tetris ir platformerio mišinys. Figūros krenta automatiškai, užsirakina kaip platformos, o tu valdai žmogutį, kuris bėga ir šokinėja tarp blokų.
 
 ## Paleidimas kompiuteryje
 
@@ -36,9 +36,11 @@ Chrome naršyklėje gali pasirinkti **Add to Home screen**, kad žaidimas atsira
 
 ## Valdymas
 
-- Dideli mygtukai apačioje: judinti į kairę/dešinę, leisti žemyn, pasukti ir nuleisti.
-- Laikyk nuspaudęs `←`, `→` arba `↓`, kad veiksmas kartotųsi.
-- Ant lentos: bakstelėk, kad pasuktum figūrą; brauk į kairę/dešinę, kad pastumtum; brauk žemyn, kad paleistum žemyn.
-- `Nuleisti`: greitai numesti figūrą iki apačios.
+- `←`: bėgti į kairę.
+- `→`: bėgti į dešinę.
+- `Šokti`: pašokti nuo žemės arba nuo užrakintos figūros.
+- Ant lentos: laikyk kairį trečdalį, kad bėgtum kairėn; dešinį trečdalį, kad bėgtum dešinėn; vidurį, kad šoktum.
 - `Pauzė`: sustabdyti arba tęsti žaidimą.
 - `Iš naujo`: pradėti naują žaidimą.
+
+Jei krentanti figūra paliečia žmogutį, žaidimas baigiasi. Užrakintos figūros tampa platformomis.

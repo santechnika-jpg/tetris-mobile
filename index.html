@@ -10,6 +10,17 @@
   </head>
   <body>
     <main class="app" aria-label="Tetris žaidimas">
+      <header class="topbar">
+        <div>
+          <span class="label">Tetris Mobile</span>
+          <strong>Žaisk nykščiais</strong>
+        </div>
+        <div class="actions">
+          <button id="pauseButton" type="button">Pauzė</button>
+          <button id="restartButton" type="button">Iš naujo</button>
+        </div>
+      </header>
+
       <section class="play-area">
         <header class="hud">
           <div>
@@ -24,6 +35,10 @@
             <span class="label">Linijos</span>
             <strong id="lines">0</strong>
           </div>
+          <div>
+            <span class="label">Kita</span>
+            <canvas id="next" width="120" height="120" aria-label="Kita figūra"></canvas>
+          </div>
         </header>
 
         <div class="board-wrap">
@@ -36,25 +51,13 @@
         </div>
       </section>
 
-      <aside class="side-panel" aria-label="Žaidimo valdymas">
-        <div class="next-box">
-          <span class="label">Kita figūra</span>
-          <canvas id="next" width="120" height="120" aria-label="Kita figūra"></canvas>
-        </div>
-
-        <div class="actions">
-          <button id="pauseButton" type="button">Pauzė</button>
-          <button id="restartButton" type="button">Iš naujo</button>
-        </div>
-
-        <div class="controls" aria-label="Lietimo valdymas">
-          <button data-action="left" type="button" aria-label="Kairė">←</button>
-          <button data-action="rotate" type="button" aria-label="Pasukti">↻</button>
-          <button data-action="right" type="button" aria-label="Dešinė">→</button>
-          <button data-action="down" type="button" aria-label="Žemyn">↓</button>
-          <button data-action="drop" type="button" class="wide" aria-label="Numesti">Nuleisti</button>
-        </div>
-      </aside>
+      <nav class="controls" aria-label="Lietimo valdymas">
+        <button data-action="left" type="button" aria-label="Kairė">←</button>
+        <button data-action="down" type="button" aria-label="Žemyn">↓</button>
+        <button data-action="right" type="button" aria-label="Dešinė">→</button>
+        <button data-action="rotate" type="button" aria-label="Pasukti">↻</button>
+        <button data-action="drop" type="button" aria-label="Nuleisti iki apačios">Nuleisti</button>
+      </nav>
     </main>
 
     <script src="game.js"></script>

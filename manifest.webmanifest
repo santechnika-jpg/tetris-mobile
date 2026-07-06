@@ -1,10 +1,10 @@
 {
-  "name": "Tetris Mobile",
-  "short_name": "Tetris",
+  "name": "Tetris Runner",
+  "short_name": "Runner",
   "start_url": "./index.html",
   "display": "standalone",
-  "background_color": "#10131a",
-  "theme_color": "#111827",
+  "background_color": "#07111f",
+  "theme_color": "#0b1220",
   "orientation": "portrait",
   "lang": "lt"
 }

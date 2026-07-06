@@ -3,17 +3,17 @@
   <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-    <meta name="theme-color" content="#111827">
-    <title>Tetris Mobile</title>
+    <meta name="theme-color" content="#0b1220">
+    <title>Tetris Runner</title>
     <link rel="manifest" href="manifest.webmanifest">
     <link rel="stylesheet" href="styles.css">
   </head>
   <body>
-    <main class="app" aria-label="Tetris žaidimas">
+    <main class="app" aria-label="Tetris Runner žaidimas">
       <header class="topbar">
         <div>
-          <span class="label">Tetris Mobile</span>
-          <strong>Žaisk nykščiais</strong>
+          <span class="label">Tetris Runner</span>
+          <strong>Šokinėk tarp figūrų</strong>
         </div>
         <div class="actions">
           <button id="pauseButton" type="button">Pauzė</button>
@@ -28,7 +28,7 @@
             <strong id="score">0</strong>
           </div>
           <div>
-            <span class="label">Lygis</span>
+            <span class="label">Greitis</span>
             <strong id="level">1</strong>
           </div>
           <div>
@@ -42,21 +42,19 @@
         </header>
 
         <div class="board-wrap">
-          <canvas id="board" width="300" height="600" aria-label="Tetris lenta"></canvas>
+          <canvas id="board" width="300" height="600" aria-label="Tetris platformerio lenta"></canvas>
           <div class="overlay" id="overlay">
-            <h1>Tetris</h1>
-            <p id="overlayText">Spausk pradėti ir dėliok figūras.</p>
+            <h1>Tetris Runner</h1>
+            <p id="overlayText">Bėk, šok ant figūrų ir venk krentančių blokų.</p>
             <button id="startButton" type="button">Pradėti</button>
           </div>
         </div>
       </section>
 
       <nav class="controls" aria-label="Lietimo valdymas">
-        <button data-action="left" type="button" aria-label="Kairė">←</button>
-        <button data-action="down" type="button" aria-label="Žemyn">↓</button>
-        <button data-action="right" type="button" aria-label="Dešinė">→</button>
-        <button data-action="rotate" type="button" aria-label="Pasukti">↻</button>
-        <button data-action="drop" type="button" aria-label="Nuleisti iki apačios">Nuleisti</button>
+        <button data-action="left" type="button" aria-label="Bėgti į kairę">←</button>
+        <button data-action="jump" type="button" aria-label="Šokti">Šokti</button>
+        <button data-action="right" type="button" aria-label="Bėgti į dešinę">→</button>
       </nav>
     </main>
 

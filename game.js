@@ -15,15 +15,10 @@ const restartButton = document.querySelector("#restartButton");
 const COLS = 10;
 const ROWS = 20;
 const CELL = boardCanvas.width / COLS;
-const COLORS = {
-  I: "#5ce1e6",
-  J: "#6c8cff",
-  L: "#ffb84d",
-  O: "#ffe066",
-  S: "#69db7c",
-  T: "#c77dff",
-  Z: "#ff6b6b"
-};
+const BLOCK_FILL = "#dfe5ef";
+const BLOCK_EDGE = "#8d98aa";
+const BLOCK_INK = "#18202d";
+const BLOCK_ACCENT = "#39e6b2";
 
 const SHAPES = {
   I: [[1, 1, 1, 1]],
@@ -47,6 +42,9 @@ let running;
 let paused;
 let gameOver;
 let bag = [];
+let holdTimer;
+let holdInterval;
+let touchStart = null;
 
 function createGrid() {
   return Array.from({ length: ROWS }, () => Array(COLS).fill(null));
@@ -266,11 +264,104 @@ function hideOverlay() {
   pauseButton.textContent = "Pauzė";
 }
 
-function drawCell(context, x, y, color, size = CELL) {
-  context.fillStyle = color;
-  context.fillRect(x * size + 1, y * size + 1, size - 2, size - 2);
-  context.fillStyle = "rgba(255, 255, 255, 0.18)";
-  context.fillRect(x * size + 3, y * size + 3, size - 6, Math.max(2, size * 0.12));
+function drawCell(context, x, y, type, size = CELL) {
+  const left = x * size;
+  const top = y * size;
+  const pad = Math.max(1, size * 0.06);
+  const inner = size - pad * 2;
+
+  context.fillStyle = BLOCK_FILL;
+  context.fillRect(left + pad, top + pad, inner, inner);
+  context.strokeStyle = BLOCK_EDGE;
+  context.lineWidth = Math.max(1, size * 0.06);
+  context.strokeRect(left + pad, top + pad, inner, inner);
+
+  context.fillStyle = "rgba(255, 255, 255, 0.48)";
+  context.fillRect(left + pad * 2, top + pad * 2, inner - pad * 2, Math.max(2, size * 0.1));
+  drawCellPattern(context, left + pad, top + pad, inner, type);
+}
+
+function drawCellPattern(context, left, top, size, type) {
+  const centerX = left + size / 2;
+  const centerY = top + size / 2;
+  const line = Math.max(2, size * 0.09);
+  context.lineWidth = line;
+  context.lineCap = "round";
+  context.lineJoin = "round";
+  context.strokeStyle = BLOCK_INK;
+  context.fillStyle = BLOCK_INK;
+
+  if (type === "I") {
+    for (let row = 0.34; row <= 0.68; row += 0.17) {
+      context.beginPath();
+      context.moveTo(left + size * 0.23, top + size * row);
+      context.lineTo(left + size * 0.77, top + size * row);
+      context.stroke();
+    }
+    return;
+  }
+
+  if (type === "J") {
+    context.strokeRect(left + size * 0.28, top + size * 0.28, size * 0.44, size * 0.44);
+    context.fillStyle = BLOCK_ACCENT;
+    context.beginPath();
+    context.arc(left + size * 0.31, top + size * 0.69, size * 0.09, 0, Math.PI * 2);
+    context.fill();
+    return;
+  }
+
+  if (type === "L") {
+    context.beginPath();
+    context.moveTo(left + size * 0.28, top + size * 0.72);
+    context.lineTo(left + size * 0.72, top + size * 0.28);
+    context.stroke();
+    context.beginPath();
+    context.moveTo(left + size * 0.55, top + size * 0.72);
+    context.lineTo(left + size * 0.74, top + size * 0.72);
+    context.lineTo(left + size * 0.74, top + size * 0.53);
+    context.stroke();
+    return;
+  }
+
+  if (type === "O") {
+    context.strokeStyle = BLOCK_ACCENT;
+    context.beginPath();
+    context.arc(centerX, centerY, size * 0.22, 0, Math.PI * 2);
+    context.stroke();
+    context.fillStyle = BLOCK_INK;
+    context.beginPath();
+    context.arc(centerX, centerY, size * 0.08, 0, Math.PI * 2);
+    context.fill();
+    return;
+  }
+
+  if (type === "S") {
+    context.beginPath();
+    context.moveTo(left + size * 0.22, centerY);
+    context.bezierCurveTo(left + size * 0.36, top + size * 0.25, left + size * 0.64, top + size * 0.75, left + size * 0.78, centerY);
+    context.stroke();
+    return;
+  }
+
+  if (type === "T") {
+    context.beginPath();
+    context.moveTo(centerX, top + size * 0.23);
+    context.lineTo(left + size * 0.72, top + size * 0.7);
+    context.lineTo(left + size * 0.28, top + size * 0.7);
+    context.closePath();
+    context.stroke();
+    return;
+  }
+
+  if (type === "Z") {
+    context.strokeStyle = BLOCK_ACCENT;
+    context.beginPath();
+    context.moveTo(left + size * 0.24, top + size * 0.32);
+    context.lineTo(left + size * 0.62, top + size * 0.32);
+    context.lineTo(left + size * 0.38, top + size * 0.68);
+    context.lineTo(left + size * 0.76, top + size * 0.68);
+    context.stroke();
+  }
 }
 
 function drawBoardGrid() {
@@ -298,7 +389,7 @@ function drawPiece(context, activePiece, size = CELL, offsetX = 0, offsetY = 0) 
   activePiece.matrix.forEach((row, y) => {
     row.forEach((value, x) => {
       if (value) {
-        drawCell(context, x + activePiece.x + offsetX, y + activePiece.y + offsetY, COLORS[activePiece.type], size);
+        drawCell(context, x + activePiece.x + offsetX, y + activePiece.y + offsetY, activePiece.type, size);
       }
     });
   });
@@ -338,7 +429,7 @@ function draw() {
   grid.forEach((row, y) => {
     row.forEach((type, x) => {
       if (type) {
-        drawCell(boardContext, x, y, COLORS[type]);
+        drawCell(boardContext, x, y, type);
       }
     });
   });
@@ -358,17 +449,68 @@ function pressButton(button) {
   setTimeout(() => button.classList.remove("is-pressed"), 90);
 }
 
+function runAction(action) {
+  if (action === "left") move(-1);
+  if (action === "right") move(1);
+  if (action === "rotate") rotatePiece();
+  if (action === "down") softDrop();
+  if (action === "drop") hardDrop();
+}
+
+function clearHold() {
+  clearTimeout(holdTimer);
+  clearInterval(holdInterval);
+}
+
 document.querySelectorAll("[data-action]").forEach((button) => {
   button.addEventListener("pointerdown", (event) => {
     event.preventDefault();
     pressButton(button);
     const action = button.dataset.action;
-    if (action === "left") move(-1);
-    if (action === "right") move(1);
-    if (action === "rotate") rotatePiece();
-    if (action === "down") softDrop();
-    if (action === "drop") hardDrop();
+    runAction(action);
+
+    if (["left", "right", "down"].includes(action)) {
+      clearHold();
+      holdTimer = setTimeout(() => {
+        holdInterval = setInterval(() => runAction(action), action === "down" ? 65 : 90);
+      }, 180);
+    }
   });
+
+  button.addEventListener("pointerup", clearHold);
+  button.addEventListener("pointercancel", clearHold);
+  button.addEventListener("pointerleave", clearHold);
+});
+
+boardCanvas.addEventListener("pointerdown", (event) => {
+  touchStart = {
+    x: event.clientX,
+    y: event.clientY,
+    time: performance.now()
+  };
+});
+
+boardCanvas.addEventListener("pointerup", (event) => {
+  if (!touchStart || !canControl()) {
+    touchStart = null;
+    return;
+  }
+
+  const dx = event.clientX - touchStart.x;
+  const dy = event.clientY - touchStart.y;
+  const absX = Math.abs(dx);
+  const absY = Math.abs(dy);
+  const swipe = Math.max(absX, absY) > 26;
+
+  if (swipe && absX > absY) {
+    move(dx > 0 ? 1 : -1);
+  } else if (swipe && dy > 0) {
+    softDrop();
+  } else if (!swipe) {
+    rotatePiece();
+  }
+
+  touchStart = null;
 });
 
 startButton.addEventListener("click", () => {
